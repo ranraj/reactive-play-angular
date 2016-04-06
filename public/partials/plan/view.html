@@ -1,0 +1,65 @@
+
+
+    <div ng-controller="PlanController as uc">
+       <!-- <div class="jumbotron">
+            <h2>Quiz</h2>
+            <p class="pull-right">Challenge yourself</p>
+        </div>-->
+
+        <div>
+            <div class="form-group">
+                <h3>
+                    Plans
+                    <a ng-href="/#/plans/create" class="btn btn-primary pull-right" id="btn_plan_create">Add Plan</a>
+                </h3>
+                <hr>
+            </div>
+            <div class="form-group">
+                <input class="form-control" type="text" ng-model="searchText" placeholder="Type here to filter Plans...">
+                <hr>
+            </div>
+
+
+            <table id="plan_list" class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Content</th>
+                    <th>Store</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="usr in uc.plans | filter:searchText">
+                    <td>
+                        {{ usr.content }}
+                    </td>
+                    <td>
+                        {{ usr.store }}
+                    </td>
+
+                    <td>
+                        <a ng-href="/#/plans/edit/{{usr.content}}/{{usr.store}}" class="btn btn-success pull-right" id="btn_plan_update">Edit Plan</a>
+                    </td>
+                </tr>
+                <tr ng-hide="uc.plans.length">
+                    <td colspan="3">
+                        <p class="text-center">No Plans Found</p>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <h3>
+                Debug
+            </h3>
+            <hr>
+            <accordion>
+                <accordion-group is-open="status.open">
+                    <accordion-heading>
+                        Json Data <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': status.open, 'glyphicon-chevron-right': !status.open}"></i>
+                    </accordion-heading>
+                    <pre>{{ uc.plans | json }}</pre>
+                </accordion-group>
+            </accordion>
+        </div>
+
+    </div>
