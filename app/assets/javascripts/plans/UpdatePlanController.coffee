@@ -13,7 +13,7 @@ class UpdatePlanController
           (data) =>
             @$log.debug "Promise returned #{data} Plan"
             @plan = data
-            @$location.path("/")
+            @$location.path("/plans")
         ,
         (error) =>
             @$log.error "Unable to update Plan: #{error}"

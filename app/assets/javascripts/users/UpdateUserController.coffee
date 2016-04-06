@@ -13,7 +13,7 @@ class UpdateUserController
           (data) =>
             @$log.debug "Promise returned #{data} User"
             @user = data
-            @$location.path("/")
+            @$location.path("/users")
         ,
         (error) =>
             @$log.error "Unable to update User: #{error}"
@@ -38,4 +38,4 @@ class UpdateUserController
           @$log.error "Unable to get Users: #{error}"
       )
 
-controllersModule.controller('UpdateUserController', ['$log', '$location', '$routeParams', 'UserService', UpdateUserCtrl])
+controllersModule.controller('UpdateUserController', ['$log', '$location', '$routeParams', 'UserService', UpdateUserController])

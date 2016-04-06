@@ -13,7 +13,7 @@ class CreateUserController
             (data) =>
                 @$log.debug "Promise returned #{data} User"
                 @user = data
-                @$location.path("/")
+                @$location.path("/users")
             ,
             (error) =>
                 @$log.error "Unable to create User: #{error}"

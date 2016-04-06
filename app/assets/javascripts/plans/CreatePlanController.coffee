@@ -13,7 +13,7 @@ class CreatePlanController
             (data) =>
                 @$log.debug "Promise returned #{data} Plan"
                 @plan = data
-                @$location.path("/")
+                @$location.path("/plans")
             ,
             (error) =>
                 @$log.error "Unable to create Plan: #{error}"
