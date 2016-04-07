@@ -1,68 +1,92 @@
+<div ng-controller="UserController as uc">
+    <md-content class="md-padding">
+        <div layout="column">
+            <md-card>
+                <md-card-title>
+                    <md-card-title-text>
+                        <div>
+                            <span class="md-headline">Users</span>
 
+                            <div class="pull-right">
+                                <a ng-href="/#/users/create" id="btn_user_create">
+                                    <md-button class="md-fab md-mini" aria-label="profile">
+                                        <span class="glyphicon glyphicon-plus"></span>
+                                    </md-button>
+                                </a>
+                            </div>
+                        </div>
+                    </md-card-title-text>
+                </md-card-title>
+                <md-card-content>
+                    <div>
+                        <md-input-container class="col-md-12">
+                            <input type="text" ng-model="searchText" placeholder="Type here to filter Users...">
+                            <hr>
+                        </md-input-container>
+                        <md-table-container>
+                            <table id="user_list" class="table table-striped" data-md-table md-progress="promise">
+                                <thead md-head>
+                                <tr md-row>
+                                    <th md-column>FirstName</th>
+                                    <th md-column>LastName</th>
+                                    <th md-column>Age</th>
+                                </tr>
+                                </thead>
+                                <tbody md-body>
+                                <tr md-row ng-repeat="usr in uc.users | filter:searchText">
+                                    <td md-cell>
+                                        {{ usr.firstName }}
+                                    </td>
+                                    <td md-cell>
+                                        {{ usr.lastName }}
+                                    </td>
+                                    <td md-cell>
+                                        {{ usr.age }}
+                                    </td>
+                                    <td md-cell>
+                                        <div>
+                                            <a class="pull-right">
+                                                <md-button
+                                                        class="md-icon-button md-button ng-scope md-blue-theme md-ink-ripple">
+                                                    <span class="glyphicon glyphicon-trash black"></span>
+                                                </md-button>
+                                            </a>
+                                            <a ng-href="/#/users/edit/{{usr.firstName}}/{{usr.lastName}}"
+                                               class="pull-right" id="btn_user_update">
+                                                <md-button
+                                                        class="md-icon-button md-button ng-scope md-blue-theme md-ink-ripple">
+                                                    <span class="glyphicon glyphicon-edit black"></span>
+                                                </md-button>
+                                            </a>
 
-    <div ng-controller="UserController as uc">
-      <!--  <div class="jumbotron">
-            <h2>Quiz</h2>
-            <p class="pull-right">Challenge yourself</p>
-        </div>-->
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr ng-hide="uc.users.length" md-row>
+                                    <td colspan="3">
+                                        <p class="text-center">No Users Found</p>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </md-table-container>
+                        <h3>
+                            Debug
+                        </h3>
+                        <hr>
+                        <accordion>
+                            <accordion-group is-open="status.open">
+                                <accordion-heading>
+                                    Json Data <i class="pull-right glyphicon"
+                                                 ng-class="{'glyphicon-chevron-down': status.open, 'glyphicon-chevron-right': !status.open}"></i>
+                                </accordion-heading>
+                                <pre>{{ uc.users | json }}</pre>
+                            </accordion-group>
+                        </accordion>
+                    </div>
+                </md-card-content>
 
-        <div>
-            <div class="form-group">
-                <h3>
-                    Users
-                    <a ng-href="/#/users/create" class="btn btn-primary pull-right" id="btn_user_create">Add User</a>
-                </h3>
-                <hr>
-            </div>
-            <div class="form-group">
-                <input class="form-control" type="text" ng-model="searchText" placeholder="Type here to filter Users...">
-                <hr>
-            </div>
-
-
-            <table id="user_list" class="table table-striped">
-                <thead>
-                <tr>
-                    <th>FirstName</th>
-                    <th>LastName</th>
-                    <th>Age</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr ng-repeat="usr in uc.users | filter:searchText">
-                    <td>
-                        {{ usr.firstName }}
-                    </td>
-                    <td>
-                        {{ usr.lastName }}
-                    </td>
-                    <td>
-                        {{ usr.age }}
-                    </td>
-                    <td>
-                        <a ng-href="/#/users/edit/{{usr.firstName}}/{{usr.lastName}}" class="btn btn-success pull-right" id="btn_user_update">Edit User</a>
-                    </td>
-                </tr>
-                <tr ng-hide="uc.users.length">
-                    <td colspan="3">
-                        <p class="text-center">No Users Found</p>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-
-            <h3>
-                Debug
-            </h3>
-            <hr>
-            <accordion>
-                <accordion-group is-open="status.open">
-                    <accordion-heading>
-                        Json Data <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': status.open, 'glyphicon-chevron-right': !status.open}"></i>
-                    </accordion-heading>
-                    <pre>{{ uc.users | json }}</pre>
-                </accordion-group>
-            </accordion>
+            </md-card>
         </div>
-
-    </div>
+    </md-content>
+</div>

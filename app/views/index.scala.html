@@ -7,34 +7,35 @@
     <!-- Latest compiled and minified Bootstrap CSS -->
     <link rel="stylesheet" href='@routes.Assets.versioned("lib/bootstrap/css/bootstrap.css")'>
     <link rel="stylesheet" href='@routes.Assets.versioned("lib/bootstrap/css/bootstrap-theme.css")'>
+    <link rel="stylesheet" href='@routes.Assets.versioned("lib/angular-material/angular-material.css")'>
     <link rel="stylesheet" media="screen" href='@routes.Assets.versioned("stylesheets/main.css")'>
 </head>
 <body>
 
 <!-- Fixed navbar -->
-<nav class="navbar navbar-inverse navbar-static-top" role="navigation">
-    <div class="container-fluid">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="#">Quiz</a>
-        </div>
+<md-toolbar>
+    <div class="md-toolbar-tools">
+        <h2>
+            <span>Quiz App</span>
+        </h2>
+        <a href="/#/"><md-button aria-label="Home">
+            Home
+        </md-button>
+        </a>
+        <a href="/#/users"><md-button aria-label="Users">
+            Users
+        </md-button></a>
+        <a href="/#/plans"><md-button aria-label="Plans">
+            Plans
+        </md-button></a>
+        <span flex></span>
 
-            <ul class="nav navbar-nav">
-                <li class="active"><a href="/#/">Home</a></li>
-                <li><a href="/#/users">Users</a></li>
-                <li><a href="/#/plans">Plans</a></li>
-            </ul>
-            <ul class="nav navbar-nav navbar-right">
-                <li><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
-                <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-            </ul>
+        <md-button class="md-fab md-mini" aria-label="profile">
+            <span class="glyphicon glyphicon-user"></span>
+        </md-button>
     </div>
-</nav>
+</md-toolbar>
+
 <div class="container-fluid">
 
     <div class="row">
@@ -47,7 +48,7 @@
     <hr/>
     <div>
         <span>&copy; YourProjectName.com 2016</span>
-        </div>
+    </div>
     <div>
         <span app-version></span>
     </div>
@@ -59,9 +60,14 @@
 <script src='@routes.Assets.versioned("lib/angularjs/angular-route.js")' type="text/javascript"></script>
 <script src='@routes.Assets.versioned("lib/angular-ui-bootstrap/ui-bootstrap-tpls.js")' type="text/javascript"></script>
 
+<script src='@routes.Assets.versioned("lib/angularjs/angular-animate.min.js")' type="text/javascript"></script>
+<script src='@routes.Assets.versioned("lib/angularjs/angular-aria.min.js")' type="text/javascript"></script>
+<script src='@routes.Assets.versioned("lib/angular-material/angular-material.min.js")' type="text/javascript"></script>
+
+
 <!-- Coffee script compiled resources (generated) -->
 
-@for(script <- javascripts.sorted) {    
-  <script src='@routes.Assets.versioned(script)' type="text/javascript"></script>
+@for(script <- javascripts.sorted) {
+<script src='@routes.Assets.versioned(script)' type="text/javascript"></script>
 }
 </html>
