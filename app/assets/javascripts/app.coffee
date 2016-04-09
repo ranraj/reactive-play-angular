@@ -25,7 +25,7 @@ angular.module('myApp.routeConfig', ['ngRoute'])
             .when('/users/create', {
                 templateUrl: '/assets/partials/user/create.html'
             })
-            .when('/users/edit/:firstName/:lastName', {
+            .when('/users/edit/:id', {
                 templateUrl: '/assets/partials/user/update.html'
             })
             .when('/plans', {
@@ -38,7 +38,7 @@ angular.module('myApp.routeConfig', ['ngRoute'])
                    templateUrl: '/assets/partials/plan/update.html'
               })
             .otherwise({redirectTo: '/'})])
-    .config(['$locationProvider', ($locationProvider) ->
+         .config(['$locationProvider', ($locationProvider) ->
         $locationProvider.html5Mode({
             enabled: true,
             requireBase: false

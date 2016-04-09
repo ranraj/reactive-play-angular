@@ -1,7 +1,9 @@
 package controllers
 
+import akka.actor.Status.Success
 import play.modules.reactivemongo.MongoController
 import play.modules.reactivemongo.json.collection.JSONCollection
+import reactivemongo.bson.{BSONObjectID, BSONDocument}
 import scala.concurrent.Future
 import reactivemongo.api.Cursor
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
@@ -34,7 +36,7 @@ class Users extends Controller with MongoController {
   // ------------------------------------------ //
 
   import models._
-  import models.UserJsonFormats._
+  import models.User._
 
   def createUser = Action.async(parse.json) {
     request =>
@@ -56,12 +58,12 @@ class Users extends Controller with MongoController {
       }.getOrElse(Future.successful(BadRequest("invalid json")))
   }
 
-  def updateUser(firstName: String, lastName: String) = Action.async(parse.json) {
+  def updateUser(id: String) = Action.async(parse.json) {
     request =>
       request.body.validate[User].map {
         user =>
           // find our user by first name and last name
-          val nameSelector = Json.obj("firstName" -> firstName, "lastName" -> lastName)
+          val nameSelector = Json.obj("_id" -> Json.obj("$oid"->id))
           collection.update(nameSelector, user).map {
             lastError =>
               logger.debug(s"Successfully updated with LastError: $lastError")
@@ -70,6 +72,52 @@ class Users extends Controller with MongoController {
       }.getOrElse(Future.successful(BadRequest("invalid json")))
   }
 
+  def softDeleteUser(id: String) = Action.async {
+    request =>
+          implicit  val objectId = id;
+          // find our user by first name and last name
+      val nameSelector = Json.obj("_id" -> Json.obj("$oid"->id))
+//      findUserService.map {
+//      users =>
+//
+//      }
+      collection.update(nameSelector, Json.obj("$set"->Json.obj("active"->"false"))).map {
+        lastError =>
+          logger.debug(s"Successfully deleted with LastError: $lastError")
+          Ok(s"User deleted")
+      }
+  }
+
+  def rawDeleteUser(id: String) = Action.async {
+    collection.remove(Json.obj("_id" -> Json.obj("$oid"->id))).map(_ => Ok)
+  }
+
+  def findUser(id: String) = Action.async {
+    implicit  val objectId = id;
+
+    findUserService.map {
+      users =>
+        Ok(users(0))
+    }
+  }
+  def findUserService(implicit id:String)={
+    // let's do our query
+    val cursor: Cursor[User] = collection.
+      // find by id
+      find(Json.obj("_id" -> Json.obj("$oid"->id),"active" -> true)).
+      // perform the query and get a cursor of JsObject
+      cursor[User]
+
+    // gather all the JsObjects in a list
+    val futureUsersList: Future[List[User]] = cursor.collect[List]()
+
+    // transform the list into a JsArray
+    val futurePersonsJsonArray: Future[JsArray] = futureUsersList.map { users =>
+      Json.arr(users)
+    }
+    futurePersonsJsonArray
+    // everything's ok! Let's reply with the array
+  }
   def findUsers = Action.async {
     // let's do our query
     val cursor: Cursor[User] = collection.

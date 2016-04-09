@@ -18,5 +18,4 @@ class CreateUserController
             (error) =>
                 @$log.error "Unable to create User: #{error}"
             )
-
 controllersModule.controller('CreateUserController', ['$log', '$location', 'UserService', CreateUserController])

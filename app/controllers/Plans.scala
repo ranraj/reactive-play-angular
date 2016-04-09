@@ -83,7 +83,7 @@ class Plans extends Controller with MongoController {
       cursor[Plan]
 
     // gather all the JsObjects in a list
-    val futurePlansList: Future[List[Plan]] = cursor.collect[List]()
+      val futurePlansList: Future[List[Plan]] = cursor.collect[List]()
 
     // transform the list into a JsArray
     val futurePersonsJsonArray: Future[JsArray] = futurePlansList.map { plans =>

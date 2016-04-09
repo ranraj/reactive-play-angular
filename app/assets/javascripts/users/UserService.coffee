@@ -37,11 +37,11 @@ class UserService
             )
         deferred.promise
 
-    updateUser: (firstName, lastName, user) ->
+    updateUser: (id, user) ->
       @$log.debug "updateUser #{angular.toJson(user, true)}"
       deferred = @$q.defer()
 
-      @$http.put("/rest/user/#{firstName}/#{lastName}", user)
+      @$http.put("/rest/user/#{id}", user)
       .success((data, status, headers) =>
               @$log.info("Successfully updated User - status #{status}")
               deferred.resolve(data)
@@ -51,5 +51,20 @@ class UserService
               deferred.reject(data)
             )
       deferred.promise
+
+    deleteUser: (id) ->
+          @$log.debug "updateUser #{angular.toJson(id,true)}"
+          deferred = @$q.defer()
+
+          @$http.delete("/rest/user/s/#{id}")
+          .success((data, status, headers) =>
+                  @$log.info("Successfully deleted User - status #{status}")
+                  deferred.resolve(data)
+                )
+          .error((data, status, header) =>
+                  @$log.error("Failed to delete user - status #{status}")
+                  deferred.reject(data)
+                )
+          deferred.promise
 
 servicesModule.service('UserService', ['$log', '$http', '$q', UserService])

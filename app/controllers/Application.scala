@@ -18,9 +18,14 @@ class Application @Inject() (uuidGenerator: UUIDGenerator) extends Controller {
 
   private final val logger: Logger = LoggerFactory.getLogger(classOf[Application])
 
-  def index = Action {
-    logger.info("Serving index page...")
+  def catchall(string:String) = Action {
+    default
+  }
 
+  def index = Action {
+    default
+  }
+  def default = {logger.info("Serving index page...")
     val javascripts = {
       if (Play.isDev) {
         // Load all .js and .coffeescript files within app/assets
@@ -32,9 +37,8 @@ class Application @Inject() (uuidGenerator: UUIDGenerator) extends Controller {
         // Concated and minified by UglifyJS
         "concat.min.js" :: Nil
       }
-    }
-
-    Ok(views.html.index(javascripts))
+  }
+  Ok(views.html.index(javascripts))
   }
 
   private def findScripts(base: File): Seq[String] = {

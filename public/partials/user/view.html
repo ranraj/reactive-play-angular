@@ -45,13 +45,13 @@
                                     </td>
                                     <td md-cell>
                                         <div>
-                                            <a class="pull-right">
+                                            <a class="pull-right" ng-click="uc.deleteUser(usr._id.$oid,$index)">
                                                 <md-button
                                                         class="md-icon-button md-button ng-scope md-blue-theme md-ink-ripple">
                                                     <span class="glyphicon glyphicon-trash black"></span>
                                                 </md-button>
                                             </a>
-                                            <a ng-href="/#/users/edit/{{usr.firstName}}/{{usr.lastName}}"
+                                            <a ng-href="/#/users/edit/{{usr._id.$oid}}"
                                                class="pull-right" id="btn_user_update">
                                                 <md-button
                                                         class="md-icon-button md-button ng-scope md-blue-theme md-ink-ripple">
