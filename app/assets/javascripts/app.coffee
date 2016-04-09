@@ -22,11 +22,11 @@ angular.module('myApp.routeConfig', ['ngRoute'])
             .when('/users', {
                 templateUrl: '/assets/partials/user/view.html'
             })
-            .when('/users/create', {
-                templateUrl: '/assets/partials/user/create.html'
-            })
             .when('/users/edit/:id', {
-                templateUrl: '/assets/partials/user/update.html'
+                templateUrl: '/assets/partials/user/details.html'
+            })
+            .when('/users/create', {
+                templateUrl: '/assets/partials/user/details.html'
             })
             .when('/plans', {
                   templateUrl: '/assets/partials/plan/view.html'
