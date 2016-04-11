@@ -32,10 +32,10 @@ angular.module('myApp.routeConfig', ['ngRoute'])
                   templateUrl: '/assets/partials/plan/view.html'
              })
              .when('/plans/create', {
-                   templateUrl: '/assets/partials/plan/create.html'
+                   templateUrl: '/assets/partials/plan/details.html'
              })
-             .when('/plans/edit/:content/:store', {
-                   templateUrl: '/assets/partials/plan/update.html'
+             .when('/plans/edit/:id', {
+                   templateUrl: '/assets/partials/plan/details.html'
               })
             .otherwise({redirectTo: '/'})])
          .config(['$locationProvider', ($locationProvider) ->

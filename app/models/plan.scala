@@ -8,6 +8,7 @@ import play.api.libs.json._
 import reactivemongo.bson.BSONObjectID
 import json.MongoImplicits._
 case class Plan(  _id : Option[BSONObjectID],
+                 title: Option[String],
                  content: String,
                  store:String,
                  active:Boolean,
@@ -20,6 +21,7 @@ object PlanJsonFormats {
   // Plan JSON Format implicit for REST
   implicit val planReads: Reads[Plan] = (
   (JsPath \ "_id").readNullable[BSONObjectID] and
+  (JsPath \ "title").readNullable[String].map(_.getOrElse("In Urgent")).map(Some(_)) and
   (JsPath \ "content").read[String] and
   (JsPath \ "store").read[String] and
   (JsPath \ "active").read[Boolean] and
@@ -29,6 +31,7 @@ object PlanJsonFormats {
   val planDateFormatter = DateTimeFormat.forPattern("MM/dd/yyyy HH:mm a")
   implicit val planWrites: Writes[Plan] = (
   (JsPath \ "_id").writeNullable[BSONObjectID]   and
+  (JsPath \ "title").writeNullable[String] and
   (JsPath \ "content").write[String] and
   (JsPath \ "store").write[String] and
   (JsPath \ "active").write[Boolean] and

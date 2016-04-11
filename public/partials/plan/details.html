@@ -1,15 +1,15 @@
-<div ng-controller="UserDetailsController as udc">
-    <h1>Create User</h1>
-    <form id="UserForm" name="UserForm" class="form-horizontal" role="form"
-          ng-submit="udc.saveOrUpdate()">
+<div ng-controller="PlanDetailsController as pdc">
+    <h1>Create Plan / Note</h1>
+    <form id="PlanForm" name="PlanForm" class="form-horizontal" role="form"
+          ng-submit="pdc.saveOrUpdate()">
         <md-card>
             <md-card-title>
                 <md-card-title-text>
                     <div>
-                        <span class="md-headline">Basic Information</span>
+                        <span class="md-headline">Details</span>
 
                         <!--<div class="pull-right">
-                            <a ng-href="/#/users/create" id="btn_user_create">
+                            <a ng-href="/#/plans/create" id="btn_plan_create">
                                 <md-button class="md-fab md-mini" aria-label="profile">
                                     <span class="glyphicon glyphicon-plus"></span>
                                 </md-button>
@@ -22,44 +22,45 @@
             <md-card-content>
                 <div class="col-md-12">
                     <md-input-container class="col-md-6">
-                        <label>First Name</label>
-                        <input ng-model="udc.user.firstName" type="text" md-maxlength="50">
+                        <label>Title</label>
+                        <input ng-model="pdc.plan.title" type="text" md-maxlength="50">
                     </md-input-container>
 
-                    <md-input-container class="col-md-6">
-                        <label>Last Name</label>
-                        <input ng-model="udc.user.lastName" type="text" id="lbl_age" md-maxlength="50">
+                    <md-input-container class="col-md-12">
+                        <label>Content</label>
+                        <textarea ng-model="pdc.plan.content" id="lbl_content" md-maxlength="140" rows="4" cols="4">
+                        </textarea>
                     </md-input-container>
                 </div>
                 <div class="col-md-12">
                     <md-input-container class="col-md-6">
-                        <label>Age</label>
-                        <input is-required="CreateUserForm.age" ng-model="udc.user.age" type="number" required
+                        <label>#Store</label>
+                        <input ng-model="pdc.plan.store" required
                                id="age">
                     </md-input-container>
-                    <md-input-container class="col-md-6" ng-hide="udc.mode==0">
-                        <label is-required="CreateUserForm.active">Active</label>
-                        <input ng-model="udc.user.active" type="text"
+                    <md-input-container hidden class="col-md-6" ng-hide="pdc.mode==0">
+                        <label is-required="CreatePlanForm.active">Active</label>
+                        <input ng-model="pdc.plan.active" type="text"
                                id="active">
                     </md-input-container>
                 </div>
 
-                <pre hidden>{{ cuc.user | json }}</pre>
+                <!--<pre hidden>{{ cuc.plan | json }}</pre>-->
 
                 <div class="col-md-12">
                     <div class="col-sm-offset-4 col-sm-8 text-right">
-                        <a ng-href="/#/users" id="btn_cancel">
+                        <a ng-href="/#/plans" id="btn_cancel">
                             <md-button type="button" id="btn_cancle" class="md-warn md-raised md-hue-2">Cancel
                             </md-button>
                         </a>
-                        <md-button type="submit" id="btn_create" class="md-primary md-raised md-hue-2">Create User
+                        <md-button type="submit" id="btn_create" class="md-primary md-raised md-hue-2">Create Plan
                         </md-button>
                     </div>
                 </div>
             </md-card-content>
         </md-card>
 
-        <pre hidden>{{ udc.user | json }}</pre>
+        <pre hidden>{{ pdc.plan | json }}</pre>
 
 
     </form>

@@ -1,65 +1,91 @@
+<div ng-controller="PlanController as pc">
+    <md-content class="md-padding">
+        <div layout="column">
+            <md-card>
+                <md-card-title>
+                    <md-card-title-text>
+                        <div>
+                            <span class="md-headline">Plans</span>
+                            <div class="pull-right">
+                                <a ng-href="/#/plans/create" id="btn_plan_create">
+                                    <md-button class="md-fab md-mini" aria-label="profile">
+                                        <span class="glyphicon glyphicon-plus"></span>
+                                    </md-button>
+                                </a>
+                            </div>
+                        </div>
+                    </md-card-title-text>
+                </md-card-title>
+                <md-card-content>
+                    <div>
+                        <md-input-container class="col-md-12">
+                            <input type="text" ng-model="searchText" placeholder="Type here to filter Plans...">
+                            <hr>
+                        </md-input-container>
+                        <md-table-container>
+                            <table id="plan_list" class="table" md-table md-row-select md-progress="promise">
+                                <thead md-head>
+                                <tr md-row>
+                                    <th md-column>Title</th>
+                                    <th md-column>Content</th>
+                                    <th md-column md-numeric>#Store</th>
+                                </tr>
+                                </thead>
+                                <tbody md-body>
+                                <tr md-row ng-repeat="usr in pc.plans | filter:searchText">
+                                    <td md-cell>
+                                        {{ usr.title }}
+                                    </td>
+                                    <td md-cell>
+                                        {{ usr.content }}
+                                    </td>
+                                    <td md-cell>
+                                        {{ usr.store }}
+                                    </td>
+                                    <td md-cell>
+                                        <div>
+                                            <a class="pull-right" ng-click="pc.deletePlan(usr._id.$oid,$index)">
+                                                <md-button
+                                                        class="md-icon-button md-button ng-scope md-blue-theme md-ink-ripple">
+                                                    <span class="glyphicon glyphicon-trash black"></span>
+                                                </md-button>
+                                            </a>
+                                            <a ng-href="/#/plans/edit/{{usr._id.$oid}}"
+                                               class="pull-right" id="btn_plan_update">
+                                                <md-button
+                                                        class="md-icon-button md-button ng-scope md-blue-theme md-ink-ripple">
+                                                    <span class="glyphicon glyphicon-edit black"></span>
+                                                </md-button>
+                                            </a>
 
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr ng-hide="pc.plans.length" md-row>
+                                    <td colspan="3">
+                                        <p class="text-center">No Plans Found</p>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </md-table-container>
+                        <!--<h3>
+                            Debug
+                        </h3>
+                        <hr>
+                        <accordion>
+                            <accordion-group is-open="status.open">
+                                <accordion-heading>
+                                    Json Data <i class="pull-right glyphicon"
+                                                 ng-class="{'glyphicon-chevron-down': status.open, 'glyphicon-chevron-right': !status.open}"></i>
+                                </accordion-heading>
+                                <pre>{{ pc.plans | json }}</pre>
+                            </accordion-group>
+                        </accordion>-->
+                    </div>
+                </md-card-content>
 
-    <div ng-controller="PlanController as uc">
-       <!-- <div class="jumbotron">
-            <h2>Quiz</h2>
-            <p class="pull-right">Challenge yourself</p>
-        </div>-->
-
-        <div>
-            <div class="form-group">
-                <h3>
-                    Plans
-                    <a ng-href="/#/plans/create" class="btn btn-primary pull-right" id="btn_plan_create">Add Plan</a>
-                </h3>
-                <hr>
-            </div>
-            <div class="form-group">
-                <input class="form-control" type="text" ng-model="searchText" placeholder="Type here to filter Plans...">
-                <hr>
-            </div>
-
-
-            <table id="plan_list" class="table table-striped">
-                <thead>
-                <tr>
-                    <th>Content</th>
-                    <th>Store</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr ng-repeat="usr in uc.plans | filter:searchText">
-                    <td>
-                        {{ usr.content }}
-                    </td>
-                    <td>
-                        {{ usr.store }}
-                    </td>
-
-                    <td>
-                        <a ng-href="/#/plans/edit/{{usr.content}}/{{usr.store}}" class="btn btn-success pull-right" id="btn_plan_update">Edit Plan</a>
-                    </td>
-                </tr>
-                <tr ng-hide="uc.plans.length">
-                    <td colspan="3">
-                        <p class="text-center">No Plans Found</p>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-
-            <h3>
-                Debug
-            </h3>
-            <hr>
-            <accordion>
-                <accordion-group is-open="status.open">
-                    <accordion-heading>
-                        Json Data <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': status.open, 'glyphicon-chevron-right': !status.open}"></i>
-                    </accordion-heading>
-                    <pre>{{ uc.plans | json }}</pre>
-                </accordion-group>
-            </accordion>
+            </md-card>
         </div>
-
-    </div>
+    </md-content>
+</div>
