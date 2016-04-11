@@ -21,7 +21,12 @@ DELETE  /rest/user/r/:id                 @controllers.Users.rawDeleteUser(id: St
 # Plan management API
 GET     /rest/plans                      @controllers.Plans.findPlans
 POST    /rest/plan                       @controllers.Plans.createPlan
-PUT     /rest/plan/:content/:store  @controllers.Plans.updatePlan(content: String, store: String)
+PUT     /rest/plan/:id                   @controllers.Plans.updatePlan(id:String)
+GET     /rest/plan/:id                   @controllers.Plans.findPlan(id: String)
+# soft delete
+DELETE  /rest/plan/s/:id                 @controllers.Plans.softDeletePlan(id: String)
+# raw delete
+DELETE  /rest/plan/r/:id                 @controllers.Plans.rawDeletePlan(id: String)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

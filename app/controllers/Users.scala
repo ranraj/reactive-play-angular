@@ -77,10 +77,6 @@ class Users extends Controller with MongoController {
           implicit  val objectId = id;
           // find our user by first name and last name
       val nameSelector = Json.obj("_id" -> Json.obj("$oid"->id))
-//      findUserService.map {
-//      users =>
-//
-//      }
       collection.update(nameSelector, Json.obj("$set"->Json.obj("active"->"false"))).map {
         lastError =>
           logger.debug(s"Successfully deleted with LastError: $lastError")

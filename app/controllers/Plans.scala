@@ -58,12 +58,12 @@ class Plans extends Controller with MongoController {
       }.getOrElse(Future.successful(BadRequest("invalid json")))
   }
 
-  def updatePlan(content: String, store: String) = Action.async(parse.json) {
+  def updatePlan(id: String) = Action.async(parse.json) {
     request =>
       request.body.validate[Plan].map {
         plan =>
           // find our plan by first name and last name
-          val nameSelector = Json.obj("content" -> content, "store" -> store)
+          val nameSelector = Json.obj("_id" -> Json.obj("$oid"->id))
           collection.update(nameSelector, plan).map {
             lastError =>
               logger.debug(s"Successfully updated with LastError: $lastError")
@@ -71,7 +71,48 @@ class Plans extends Controller with MongoController {
           }
       }.getOrElse(Future.successful(BadRequest("invalid json")))
   }
+  def softDeletePlan(id: String) = Action.async {
+    request =>
+      implicit  val objectId = id;
+      // find our plan by first name and last name
+      val nameSelector = Json.obj("_id" -> Json.obj("$oid"->id))
+      collection.update(nameSelector, Json.obj("$set"->Json.obj("active"->"false"))).map {
+        lastError =>
+          logger.debug(s"Successfully deleted with LastError: $lastError")
+          Ok(s"Plan deleted")
+      }
+  }
 
+  def rawDeletePlan(id: String) = Action.async {
+    collection.remove(Json.obj("_id" -> Json.obj("$oid"->id))).map(_ => Ok)
+  }
+
+  def findPlan(id: String) = Action.async {
+    implicit  val objectId = id;
+
+    findPlanService.map {
+      plans =>
+        Ok(plans(0))
+    }
+  }
+  def findPlanService(implicit id:String)={
+    // let's do our query
+    val cursor: Cursor[Plan] = collection.
+      // find by id
+      find(Json.obj("_id" -> Json.obj("$oid"->id),"active" -> true)).
+      // perform the query and get a cursor of JsObject
+      cursor[Plan]
+
+    // gather all the JsObjects in a list
+    val futurePlansList: Future[List[Plan]] = cursor.collect[List]()
+
+    // transform the list into a JsArray
+    val futurePersonsJsonArray: Future[JsArray] = futurePlansList.map { plans =>
+      Json.arr(plans)
+    }
+    futurePersonsJsonArray
+    // everything's ok! Let's reply with the array
+  }
   def findPlans = Action.async {
     // let's do our query
     val cursor: Cursor[Plan] = collection.

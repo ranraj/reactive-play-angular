@@ -6,7 +6,6 @@
                     <md-card-title-text>
                         <div>
                             <span class="md-headline">Users</span>
-
                             <div class="pull-right">
                                 <a ng-href="/#/users/create" id="btn_user_create">
                                     <md-button class="md-fab md-mini" aria-label="profile">
@@ -24,12 +23,12 @@
                             <hr>
                         </md-input-container>
                         <md-table-container>
-                            <table id="user_list" class="table table-striped" data-md-table md-progress="promise">
+                            <table id="user_list" class="table" md-table md-row-select md-progress="promise">
                                 <thead md-head>
                                 <tr md-row>
                                     <th md-column>FirstName</th>
                                     <th md-column>LastName</th>
-                                    <th md-column>Age</th>
+                                    <th md-column md-numeric>Age</th>
                                 </tr>
                                 </thead>
                                 <tbody md-body>
@@ -74,15 +73,15 @@
                             Debug
                         </h3>
                         <hr>
-                        <accordion>-->
-                            <!--<accordion-group is-open="status.open">-->
-                                <!--<accordion-heading>-->
-                                    <!--Json Data <i class="pull-right glyphicon"-->
-                                                 <!--ng-class="{'glyphicon-chevron-down': status.open, 'glyphicon-chevron-right': !status.open}"></i>-->
-                                <!--</accordion-heading>-->
-                                <!--<pre>{{ uc.users | json }}</pre>-->
-                            <!--</accordion-group>-->
-                        <!--</accordion>-->
+                        <accordion>
+                            <accordion-group is-open="status.open">
+                                <accordion-heading>
+                                    Json Data <i class="pull-right glyphicon"
+                                                 ng-class="{'glyphicon-chevron-down': status.open, 'glyphicon-chevron-right': !status.open}"></i>
+                                </accordion-heading>
+                                <pre>{{ uc.users | json }}</pre>
+                            </accordion-group>
+                        </accordion>-->
                     </div>
                 </md-card-content>
 
