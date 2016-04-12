@@ -68,7 +68,7 @@ class PlanService
       deferred.promise
 
     deletePlan: (id) ->
-          @$log.debug "updatePlan #{angular.toJson(id,true)}"
+          @$log.debug "deletePlan #{angular.toJson(id,true)}"
           deferred = @$q.defer()
 
           @$http.delete("/rest/plan/s/#{id}")

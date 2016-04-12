@@ -19,9 +19,10 @@ class PlanController
             (error) =>
                 @$log.error "Unable to get Plans: #{error}"
             )
+
     deletePlan: (@id,@rowIndex) ->
-             @$log.debug "updatePlan()"
-             @PlanService.deletePlan(@id)
+             @$log.debug "deletePlan()"
+             @PlanService.deletePlan(@id._id.$oid)
              .then(
                  (data) =>
                    @$log.debug "Promise returned #{data} Plan"
@@ -35,7 +36,62 @@ class PlanController
              )
 
     viewPlanDetails : (@selectedPlan) ->
-            @$log.debug "viewPlanDetails for ",@selectedPlan
+            @$log.debug "viewPlanDetails for #{@selectedPlan}"
             @plan = @selectedPlan
+
+    saveOrUpdate: () ->
+          @$log.debug "saveOrUpdate #{@plan}"
+          if(@plan._id)
+            @updatePlan()
+          else
+            @createPlan()
+
+    restPlanForm: () ->
+          @$log.debug "clear #{@plan}"
+          @plan={}
+
+    createPlan: () ->
+          @$log.debug "createPlan()"
+          @plan.active = true
+          @PlanService.createPlan(@plan)
+          .then(
+              (data) =>
+                @$log.debug "Promise returned #{data} Plan"
+                @plan = data
+                @getAllPlans()
+              ,
+              (error) =>
+                @$log.error "Unable to create Plan: #{error}"
+              )
+
+     updatePlan: () ->
+          @$log.debug "updatePlan()"
+          @plan.active = true
+          @PlanService.updatePlan(@plan._id.$oid,@plan)
+          .then(
+              (data) =>
+                @$log.debug "Promise returned #{data} Plan"
+                @plan = data
+            ,
+            (error) =>
+                @$log.error "Unable to update Plan: #{error}"
+          )
+
+     findPlan: (id) ->
+          # route params must be same name as provided in routing url in app.coffee
+            #id = @$routeParams.id
+            @$log.debug "findPlan #{id}"
+            @PlanService.findPlan(id)
+            .then(
+                (data) =>
+                    @$log.debug "Promise returned #{data} Plan"
+                    # find a plan with the name of firstName and lastName
+                    # as filter returns an array, get the first object in it, and return it
+                    @plan = data
+            ,
+                (error) =>
+                    @$log.error "Unable to get Plans: #{error}"
+            )
+
 
 controllersModule.controller('PlanController', ['$log', 'PlanService', PlanController])
