@@ -5,6 +5,7 @@ class PlanController
         @$log.debug "constructing PlanController"
         @plans = []
         @getAllPlans()
+        @plan = {}
 
     getAllPlans: () ->
         @$log.debug "getAllPlans()"
@@ -32,4 +33,9 @@ class PlanController
                (error) =>
                    @$log.error "Unable to soft-delete Plan: #{error}"
              )
+
+    viewPlanDetails : (@selectedPlan) ->
+            @$log.debug "viewPlanDetails for ",@selectedPlan
+            @plan = @selectedPlan
+
 controllersModule.controller('PlanController', ['$log', 'PlanService', PlanController])

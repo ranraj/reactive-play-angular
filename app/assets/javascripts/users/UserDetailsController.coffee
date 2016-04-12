@@ -60,7 +60,7 @@ class UserDetailsController
                 @$log.debug "Promise returned #{data} User"
                 # find a user with the name of firstName and lastName
                 # as filter returns an array, get the first object in it, and return it
-                @user = data[0]
+                @user = data
         ,
             (error) =>
                 @$log.error "Unable to get Users: #{error}"
