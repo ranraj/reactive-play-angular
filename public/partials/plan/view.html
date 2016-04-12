@@ -10,7 +10,7 @@
                        </span>
 
                 <div class="pull-right">
-                    <md-button class="md-fab md-mini" aria-label="profile" ng-click="pc.restPlanForm()">
+                    <md-button class="md-fab md-mini" aria-label="profile" ng-click="pc.clear()">
                         <span class="glyphicon glyphicon-plus"></span>
                     </md-button>
                 </div>
@@ -19,19 +19,38 @@
     </md-card-title>
 
     <md-card-content>
-        <!-- Container #2 -->
+
         <div flex layout="row">
-            <!-- Container #3 -->
+
             <md-sidenav md-is-locked-open="true" class="md-whiteframe-z1">
-                <md-list ng-repeat="plan in pc.plans | filter:searchText">
-                    <md-list-item class="secondary-button-padding" ng-click="pc.viewPlanDetails(plan)">
-                        <p>{{ plan.title }}</p>
-                        <md-button
-                                class="md-icon-button md-button md-secondary" ng-click="pc.deletePlan(plan,$index)">
-                            <span class="glyphicon glyphicon-trash black "></span>
-                        </md-button>
-                    </md-list-item>
-                </md-list>
+                <div ng-cloak>
+                    <md-content>
+                        <md-tabs md-dynamic-height md-border-bottom>
+                            <md-tab label="Recent">
+                                <md-content class="md-padding">
+                                    <md-list ng-repeat="plan in pc.plans | filter:searchText">
+                                        <md-list-item class="secondary-button-padding" ng-click="pc.viewPlanDetails(plan)">
+                                            <p>{{ plan.title }}</p>
+                                            <md-button
+                                                    class="md-icon-button md-button md-secondary" ng-click="pc.deletePlan(plan,$index)">
+                                                <span class="glyphicon glyphicon-trash black "></span>
+                                            </md-button>
+                                        </md-list-item>
+                                    </md-list>
+                                    <md-list ng-hide="pc.plans.length">
+                                        <p class="text-center">No Plans Found</p>
+                                    </md-list>
+                                </md-content>
+                            </md-tab>
+                            <md-tab label="Top in #">
+                                <md-content class="md-padding">
+                                    <h1 class="md-display-2">Tab Two</h1>
+                                    <p>Test2.</p>
+                                </md-content>
+                            </md-tab>
+                        </md-tabs>
+                    </md-content>
+                </div>
             </md-sidenav>
 
             <md-content flex id="content" class="md-padding">
@@ -65,7 +84,7 @@
                         <div class="col-sm-offset-4 col-sm-8 text-right">
                             <a ng-href="/#/plans" id="btn_cancel">
                                 <md-button type="button" id="btn_clear" class="md-warn md-raised md-hue-2"
-                                           ng-click="pc.restPlanForm()">Clear
+                                           ng-click="pc.clear()">Clear
                                 </md-button>
                             </a>
                             <md-button type="submit" id="btn_create" class="md-primary md-raised md-hue-2"

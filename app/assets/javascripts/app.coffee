@@ -16,7 +16,7 @@ app = angular.module('myApp', dependencies)
 angular.module('myApp.routeConfig', ['ngRoute'])
     .config(['$routeProvider', ($routeProvider) ->
         $routeProvider
-            .when('/', {
+            .when('/aboutus', {
                           templateUrl: '/assets/partials/home.html'
             })
             .when('/users', {
@@ -28,15 +28,9 @@ angular.module('myApp.routeConfig', ['ngRoute'])
             .when('/users/create', {
                 templateUrl: '/assets/partials/user/details.html'
             })
-            .when('/plans', {
+            .when('/', {
                   templateUrl: '/assets/partials/plan/view.html'
              })
-             .when('/plans/create', {
-                   templateUrl: '/assets/partials/plan/details.html'
-             })
-             .when('/plans/edit/:id', {
-                   templateUrl: '/assets/partials/plan/details.html'
-              })
             .otherwise({redirectTo: '/'})])
          .config(['$locationProvider', ($locationProvider) ->
         $locationProvider.html5Mode({

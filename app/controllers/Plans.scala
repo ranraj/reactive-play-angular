@@ -2,6 +2,7 @@ package controllers
 
 import javax.inject.Singleton
 
+import com.fasterxml.jackson.annotation.JsonValue
 import org.slf4j.{Logger, LoggerFactory}
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.json._
@@ -9,7 +10,9 @@ import play.api.mvc._
 import play.modules.reactivemongo.MongoController
 import play.modules.reactivemongo.json.collection.JSONCollection
 import reactivemongo.api.Cursor
+import services.PlansService
 
+import scala.collection.immutable.ListMap
 import scala.concurrent.Future
 
 /**
@@ -97,8 +100,7 @@ class Plans extends Controller with MongoController {
         case None => NoContent
     }
   }
-
-  def findPlans = Action.async {
+  def fetchPlansFromService:Future[List[Plan]] = {
     // let's do our query
     val cursor: Cursor[Plan] = collection.
       // find all
@@ -108,14 +110,55 @@ class Plans extends Controller with MongoController {
       // perform the query and get a cursor of JsObject
       cursor[Plan]
 
-    // gather all the JsObjects in a list
-      val futurePlansList: Future[List[Plan]] = cursor.collect[List]()
-
-    // transform the list into a JsArray
-    val futurePersonsJsonArray: Future[JsArray] = futurePlansList.map { plans =>
+    // collect the JsonObjects in List
+    val futurePlansList: Future[List[Plan]] = cursor.collect[List]()
+    futurePlansList
+  }
+  def findPlans = Action.async {
+    val futurePersonsJsonArray: Future[JsArray] = fetchPlansFromService.map { plans =>
       Json.arr(plans)
     }
-    // everything's ok! Let's reply with the array
+    // map as json array
+    futurePersonsJsonArray.map {
+      plans =>
+        Ok(plans(0))
+    }
+  }
+  def findAllStores = Action.async{
+    val futureStoreList = fetchPlansFromService.map { plans => {
+      for {
+        plan <- plans
+        stores <- plan.store
+      } yield (stores)
+    }
+    }
+
+    val futureStoreArray = futureStoreList.map{ stores =>
+    Json.arr(stores.distinct)
+    }
+    futureStoreArray.map {
+      plans =>
+        Ok(plans(0))
+    }
+  }
+  def findPlansByHash = Action.async{
+    val futureTupleList = fetchPlansFromService.map{ plans => {
+      val storeToPlan:List[(String,Plan)] = for{
+        plan <- plans
+        stores <- plan.store
+      }yield (stores,plan)
+        val plansByTag = storeToPlan.groupBy{
+          case(store,plan)=> store
+        }.mapValues{
+          storeToPlanList=>storeToPlanList.map{storeAndPlan => storeAndPlan._2}}
+      plansByTag
+      }
+    }
+
+    val futurePersonsJsonArray: Future[JsArray] = futureTupleList.map { plans =>
+      Json.arr(plans)
+    }
+
     futurePersonsJsonArray.map {
       plans =>
         Ok(plans(0))

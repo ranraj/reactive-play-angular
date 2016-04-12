@@ -16,7 +16,10 @@ directivesModule.directive 'splitArray', ->
 
       toUser = (array) ->
         console.log(array)
-        array.join ' '
+        if(array)
+          array.join ' '
+        else
+          array = []
 
       ngModel.$parsers.push fromUser
       ngModel.$formatters.push toUser

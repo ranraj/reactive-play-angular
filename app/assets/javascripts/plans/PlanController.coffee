@@ -46,9 +46,9 @@ class PlanController
           else
             @createPlan()
 
-    restPlanForm: () ->
+    clear: () ->
           @$log.debug "clear #{@plan}"
-          @plan={}
+          @plan = {}
 
     createPlan: () ->
           @$log.debug "createPlan()"
@@ -57,7 +57,7 @@ class PlanController
           .then(
               (data) =>
                 @$log.debug "Promise returned #{data} Plan"
-                @plan = data
+                @clear()
                 @getAllPlans()
               ,
               (error) =>
@@ -71,7 +71,7 @@ class PlanController
           .then(
               (data) =>
                 @$log.debug "Promise returned #{data} Plan"
-                @plan = data
+                @clear()
             ,
             (error) =>
                 @$log.error "Unable to update Plan: #{error}"
@@ -87,7 +87,6 @@ class PlanController
                     @$log.debug "Promise returned #{data} Plan"
                     # find a plan with the name of firstName and lastName
                     # as filter returns an array, get the first object in it, and return it
-                    @plan = data
             ,
                 (error) =>
                     @$log.error "Unable to get Plans: #{error}"
