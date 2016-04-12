@@ -25,8 +25,6 @@ class PlanDetailsController
   createPlan: () ->
       @$log.debug "createPlan()"
       @plan.active = true
-      store = @plan.store
-      @plan.store = store.split(" ")
       @PlanService.createPlan(@plan)
       .then(
           (data) =>
