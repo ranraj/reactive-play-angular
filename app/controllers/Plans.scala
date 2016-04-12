@@ -88,31 +88,16 @@ class Plans extends Controller with MongoController {
   }
 
   def findPlan(id: String) = Action.async {
-    implicit  val objectId = id;
 
-    findPlanService.map {
-      plans =>
-        Ok(plans(0))
+    val futurePlans: Future[Option[Plan]] = collection.
+      find(Json.obj("_id" -> Json.obj("$oid"->id),"active" -> true)).one[Plan]
+
+    futurePlans.map{
+        case plan:Some[Plan] => Ok(Json.toJson(plan))
+        case None => NoContent
     }
   }
-  def findPlanService(implicit id:String)={
-    // let's do our query
-    val cursor: Cursor[Plan] = collection.
-      // find by id
-      find(Json.obj("_id" -> Json.obj("$oid"->id),"active" -> true)).
-      // perform the query and get a cursor of JsObject
-      cursor[Plan]
 
-    // gather all the JsObjects in a list
-    val futurePlansList: Future[List[Plan]] = cursor.collect[List]()
-
-    // transform the list into a JsArray
-    val futurePersonsJsonArray: Future[JsArray] = futurePlansList.map { plans =>
-      Json.arr(plans)
-    }
-    futurePersonsJsonArray
-    // everything's ok! Let's reply with the array
-  }
   def findPlans = Action.async {
     // let's do our query
     val cursor: Cursor[Plan] = collection.

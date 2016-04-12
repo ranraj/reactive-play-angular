@@ -89,31 +89,16 @@ class Users extends Controller with MongoController {
   }
 
   def findUser(id: String) = Action.async {
-    implicit  val objectId = id;
 
-    findUserService.map {
-      users =>
-        Ok(users(0))
+    val futureUsers: Future[Option[User]] = collection.
+    find(Json.obj("_id" -> Json.obj("$oid"->id),"active" -> true)).one[User]
+
+    futureUsers.map{
+        case user:Some[User] => Ok(Json.toJson(user))
+        case None => NoContent
     }
   }
-  def findUserService(implicit id:String)={
-    // let's do our query
-    val cursor: Cursor[User] = collection.
-      // find by id
-      find(Json.obj("_id" -> Json.obj("$oid"->id),"active" -> true)).
-      // perform the query and get a cursor of JsObject
-      cursor[User]
 
-    // gather all the JsObjects in a list
-    val futureUsersList: Future[List[User]] = cursor.collect[List]()
-
-    // transform the list into a JsArray
-    val futurePersonsJsonArray: Future[JsArray] = futureUsersList.map { users =>
-      Json.arr(users)
-    }
-    futurePersonsJsonArray
-    // everything's ok! Let's reply with the array
-  }
   def findUsers = Action.async {
     // let's do our query
     val cursor: Cursor[User] = collection.

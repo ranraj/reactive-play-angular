@@ -25,6 +25,8 @@ class PlanDetailsController
   createPlan: () ->
       @$log.debug "createPlan()"
       @plan.active = true
+      store = @plan.store
+      @plan.store = store.split(" ")
       @PlanService.createPlan(@plan)
       .then(
           (data) =>
@@ -60,7 +62,7 @@ class PlanDetailsController
                 @$log.debug "Promise returned #{data} Plan"
                 # find a plan with the name of firstName and lastName
                 # as filter returns an array, get the first object in it, and return it
-                @plan = data[0]
+                @plan = data
         ,
             (error) =>
                 @$log.error "Unable to get Plans: #{error}"
