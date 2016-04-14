@@ -6,6 +6,8 @@ class PlanController
         @plans = []
         @getAllPlans()
         @plan = {}
+        @plansByHash =[]
+        @getPlansByHash()
 
     getAllPlans: () ->
         @$log.debug "getAllPlans()"
@@ -64,7 +66,7 @@ class PlanController
                 @$log.error "Unable to create Plan: #{error}"
               )
 
-     updatePlan: () ->
+    updatePlan: () ->
           @$log.debug "updatePlan()"
           @plan.active = true
           @PlanService.updatePlan(@plan._id.$oid,@plan)
@@ -77,8 +79,8 @@ class PlanController
                 @$log.error "Unable to update Plan: #{error}"
           )
 
-     findPlan: (id) ->
-          # route params must be same name as provided in routing url in app.coffee
+    findPlan: (id) ->
+            #route params must be same name as provided in routing url in app.coffee
             #id = @$routeParams.id
             @$log.debug "findPlan #{id}"
             @PlanService.findPlan(id)
@@ -92,5 +94,16 @@ class PlanController
                     @$log.error "Unable to get Plans: #{error}"
             )
 
+    getPlansByHash: () ->
+            @$log.debug "controller getPlansByHash()"
 
+            @PlanService.listPlansByHash()
+            .then(
+                (data) =>
+                    @$log.debug "Promise returned #{data.length} Hash Lists Plans"
+                    @plansByHash = data
+                ,
+                (error) =>
+                    @$log.error "Unable to get Plans: #{error}"
+                )
 controllersModule.controller('PlanController', ['$log', 'PlanService', PlanController])

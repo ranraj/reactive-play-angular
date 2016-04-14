@@ -1,6 +1,8 @@
 
 package models
 
+import java.util.Comparator
+
 import org.joda.time.format.DateTimeFormat
 import org.joda.time.{DateTimeZone, DateTime}
 import play.api.libs.functional.syntax._
@@ -40,4 +42,16 @@ object PlanJsonFormats {
 )(unlift(Plan.unapply))
   implicit val planFormatFromJSON =Json.fromJson[Plan]
   implicit val planFormatToJSON =Json.toJson[Plan]
+
+  // Group by plans with store
+  implicit val comparator:Comparator[(String, List[Plan])] with Object {def compare(o1: (String, List[Plan]), o2: (String, List[Plan])): Int} = new Comparator[(String, List[Plan])] {
+    override def compare(o1: (String, List[Plan]), o2: (String, List[Plan])): Int = {
+      o2._2.length - o1._2.length
+    }
+  }
+  implicit val order = Ordering.comparatorToOrdering[(String, List[Plan])]
+
+  implicit val storeAndPlansWriter: Writes[(String,List[Plan])] = new Writes[(String,List[Plan])] {
+    def writes(storesAndPlanObj: (String,List[Plan])): JsValue = Json.obj("store"->storesAndPlanObj._1,"plans"->storesAndPlanObj._2)
+  }
 }

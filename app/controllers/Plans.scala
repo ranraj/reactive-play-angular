@@ -1,5 +1,6 @@
 package controllers
 
+import java.util.Comparator
 import javax.inject.Singleton
 
 import com.fasterxml.jackson.annotation.JsonValue
@@ -74,12 +75,11 @@ class Plans extends Controller with MongoController {
           }
       }.getOrElse(Future.successful(BadRequest("invalid json")))
   }
+
   def softDeletePlan(id: String) = Action.async {
     request =>
-      implicit  val objectId = id;
       // find our plan by first name and last name
-      val nameSelector = Json.obj("_id" -> Json.obj("$oid"->id))
-      collection.update(nameSelector, Json.obj("$set"->Json.obj("active"->"false"))).map {
+      collection.update(Json.obj("_id" -> Json.obj("$oid"->id)), Json.obj("$set"->Json.obj("active"->"false"))).map {
         lastError =>
           logger.debug(s"Successfully deleted with LastError: $lastError")
           Ok(s"Plan deleted")
@@ -91,15 +91,14 @@ class Plans extends Controller with MongoController {
   }
 
   def findPlan(id: String) = Action.async {
-
     val futurePlans: Future[Option[Plan]] = collection.
       find(Json.obj("_id" -> Json.obj("$oid"->id),"active" -> true)).one[Plan]
-
     futurePlans.map{
         case plan:Some[Plan] => Ok(Json.toJson(plan))
         case None => NoContent
     }
   }
+
   def fetchPlansFromService:Future[List[Plan]] = {
     // let's do our query
     val cursor: Cursor[Plan] = collection.
@@ -109,21 +108,17 @@ class Plans extends Controller with MongoController {
       sort(Json.obj("created" -> -1)).
       // perform the query and get a cursor of JsObject
       cursor[Plan]
+    // return Future[List[Plan]]
+    cursor.collect[List]()
+  }
 
-    // collect the JsonObjects in List
-    val futurePlansList: Future[List[Plan]] = cursor.collect[List]()
-    futurePlansList
-  }
   def findPlans = Action.async {
-    val futurePersonsJsonArray: Future[JsArray] = fetchPlansFromService.map { plans =>
-      Json.arr(plans)
-    }
     // map as json array
-    futurePersonsJsonArray.map {
-      plans =>
-        Ok(plans(0))
-    }
+    writeResponse(fetchPlansFromService.map { plans =>
+      Json.arr(plans)
+    })
   }
+
   def findAllStores = Action.async{
     val futureStoreList = fetchPlansFromService.map { plans => {
       for {
@@ -132,17 +127,13 @@ class Plans extends Controller with MongoController {
       } yield (stores)
     }
     }
-
-    val futureStoreArray = futureStoreList.map{ stores =>
-    Json.arr(stores.distinct)
-    }
-    futureStoreArray.map {
-      plans =>
-        Ok(plans(0))
-    }
+    writeResponse(futureStoreList.map{ stores =>
+      Json.arr(stores.distinct)
+    })
   }
+
   def findPlansByHash = Action.async{
-    val futureTupleList = fetchPlansFromService.map{ plans => {
+    val futureTupleList : Future[List[(String,List[Plan])]] = fetchPlansFromService.map{ plans => {
       val storeToPlan:List[(String,Plan)] = for{
         plan <- plans
         stores <- plan.store
@@ -151,18 +142,19 @@ class Plans extends Controller with MongoController {
           case(store,plan)=> store
         }.mapValues{
           storeToPlanList=>storeToPlanList.map{storeAndPlan => storeAndPlan._2}}
-      plansByTag
+          plansByTag.toList.sorted
       }
     }
+    writeResponse(futureTupleList.map { plans =>
+      Json.arr(Json.toJson(plans.take(5)))
+    })
+  }
 
-    val futurePersonsJsonArray: Future[JsArray] = futureTupleList.map { plans =>
-      Json.arr(plans)
-    }
-
+  //Utils
+  def writeResponse(futurePersonsJsonArray: Future[JsArray]) = {
     futurePersonsJsonArray.map {
       plans =>
         Ok(plans(0))
     }
   }
-
 }

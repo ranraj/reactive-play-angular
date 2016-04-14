@@ -1,5 +1,6 @@
 package json
 
+import models.Plan
 import org.joda.time.{DateTimeZone, DateTime}
 import play.api.libs.json._
 import reactivemongo.bson.BSONObjectID
@@ -18,6 +19,7 @@ object MongoImplicits {
       "$oid" -> objectId.stringify
     )
   }
+
   // Read / write implicit for DateTime
   implicit val dateTimeRead: Reads[DateTime] =
     (__ \ "$date").read[Long].map { dateTime =>

@@ -4,8 +4,7 @@
             <div layout="row">
                        <span class="col-md-12">
                            <md-input-container class="col-md-12">
-                               <input type="text" ng-model="searchText" placeholder="Type here to filter Plans..."
-                                      >
+                               <input type="text" ng-model="searchText" placeholder="Type here to filter Plans...">
                            </md-input-container>
                        </span>
 
@@ -19,9 +18,7 @@
     </md-card-title>
 
     <md-card-content>
-
         <div flex layout="row">
-
             <md-sidenav md-is-locked-open="true" class="md-whiteframe-z1">
                 <div ng-cloak>
                     <md-content>
@@ -44,8 +41,18 @@
                             </md-tab>
                             <md-tab label="Top in #">
                                 <md-content class="md-padding">
-                                    <h1 class="md-display-2">Tab Two</h1>
-                                    <p>Test2.</p>
+                                    <md-list ng-repeat="hashTags in pc.plansByHash | filter:searchText">
+                                        <md-list-item class="secondary-button-padding" ><!--ng-click="pc.viewPlanDetails(plan)">-->
+                                            <p>{{ hashTags.store }}</p>
+                                            <md-button
+                                                    class="md-icon-button md-button md-secondary" ><!--ng-click="pc.deletePlan(plan,$index)">-->
+                                                <span class="glyphicon glyphicon-trash black "></span>
+                                            </md-button>
+                                        </md-list-item>
+                                    </md-list>
+                                    <md-list ng-hide="pc.plans.length">
+                                        <p class="text-center">No Hash tags Found</p>
+                                    </md-list>
                                 </md-content>
                             </md-tab>
                         </md-tabs>
