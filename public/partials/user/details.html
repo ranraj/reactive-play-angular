@@ -37,10 +37,30 @@
                         <input is-required="CreateUserForm.age" ng-model="udc.user.age" type="number" required
                                id="age">
                     </md-input-container>
+                    <md-input-container class="col-md-6">
+                        <label>Email</label>
+                        <input ng-model="udc.user.emailId" type="email" id="email">
+                    </md-input-container>
+                </div>
+                <div class="col-md-12">
+                    <md-input-container class="col-md-6">
+                        <label>Intrest</label>
+                        <input ng-model="udc.user.interest" type="text" md-maxlength="50">
+                    </md-input-container>
+
                     <md-input-container class="col-md-6" ng-hide="udc.mode==0">
                         <label is-required="CreateUserForm.active">Active</label>
                         <input ng-model="udc.user.active" type="text"
                                id="active">
+                    </md-input-container>
+                </div>
+                <div class="col-md-12">
+                    <md-input-container class="col-md-6">
+                        <label>Date of Birth</label>
+                        <input ng-model="udc.user.dob" type="date" id="dob"
+                                placeholder="yyyy-MM-dd"
+                                min="1900-01-01" max="2005-12-31"
+                               date-frmt />
                     </md-input-container>
                 </div>
 
