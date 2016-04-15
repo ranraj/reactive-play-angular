@@ -29,6 +29,8 @@
                                     <th md-column>FirstName</th>
                                     <th md-column>LastName</th>
                                     <th md-column md-numeric>Age</th>
+                                    <th md-column>Email</th>
+                                    <th md-column>Date of Birth</th>
                                 </tr>
                                 </thead>
                                 <tbody md-body>
@@ -41,6 +43,12 @@
                                     </td>
                                     <td md-cell>
                                         {{ usr.age }}
+                                    </td>
+                                    <td md-cell>
+                                        {{ usr.emailId }}
+                                    </td>
+                                    <td md-cell>
+                                        {{ usr.dob | date:'dd-MM-yyyy' }}
                                     </td>
                                     <td md-cell>
                                         <div>
