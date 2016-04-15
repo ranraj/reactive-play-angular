@@ -6,12 +6,13 @@ class PlanController
         @plans = []
         @getAllPlans()
         @plan = {}
-        @plansByHash =[]
-        @getPlansByHash()
+        @plansGroupByHash =[]
+        @plansByHash = {}
+        @hideRecentDisplay = false
 
     getAllPlans: () ->
         @$log.debug "getAllPlans()"
-
+        @hideRecentDisplay=false
         @PlanService.listPlans()
         .then(
             (data) =>
@@ -74,6 +75,7 @@ class PlanController
               (data) =>
                 @$log.debug "Promise returned #{data} Plan"
                 @clear()
+                @getAllPlans()
             ,
             (error) =>
                 @$log.error "Unable to update Plan: #{error}"
@@ -94,10 +96,22 @@ class PlanController
                     @$log.error "Unable to get Plans: #{error}"
             )
 
-    getPlansByHash: () ->
-            @$log.debug "controller getPlansByHash()"
+    getPlansGroupByHash: () ->
+            @$log.debug "controller getPlansGroupByHash()"
+            @PlanService.listPlansGroupByHash()
+            .then(
+                (data) =>
+                    @$log.debug "Promise returned #{data.length} Hash Lists Plans"
+                    @plansGroupByHash = data
+                ,
+                (error) =>
+                    @$log.error "Unable to get Plans: #{error}"
+                )
 
-            @PlanService.listPlansByHash()
+    findPlansByHash: (hashId) ->
+            @$log.debug "controller findPlansByHash(#{hashId})"
+            @hideRecentDisplay=true
+            @PlanService.listPlansByHash(hashId)
             .then(
                 (data) =>
                     @$log.debug "Promise returned #{data.length} Hash Lists Plans"

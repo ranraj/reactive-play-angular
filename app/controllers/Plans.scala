@@ -114,9 +114,7 @@ class Plans extends Controller with MongoController {
 
   def findPlans = Action.async {
     // map as json array
-    writeResponse(fetchPlansFromService.map { plans =>
-      Json.arr(plans)
-    })
+    writeResponse(fetchPlansFromService.map(plans =>Json.arr(plans)))
   }
 
   def findAllStores = Action.async{
@@ -127,34 +125,32 @@ class Plans extends Controller with MongoController {
       } yield (stores)
     }
     }
-    writeResponse(futureStoreList.map{ stores =>
-      Json.arr(stores.distinct)
-    })
+    writeResponse(futureStoreList.map(stores =>Json.arr(stores.distinct)))
   }
 
-  def findPlansByHash = Action.async{
-    val futureTupleList : Future[List[(String,List[Plan])]] = fetchPlansFromService.map{ plans => {
+  def findPlansGroupByHash = Action.async{
+    writeResponse(findPlansAndGroupByHash.map(plans =>plans.toList.sorted).map( plans =>Json.arr(Json.toJson(plans.take(5)))))
+  }
+  def findPlansByHash(hashId:String) = Action.async{
+    writeResponse(findPlansAndGroupByHash.map(_.get(hashId.toUpperCase())).map (plans =>Json.arr(plans)))
+  }
+  private def findPlansAndGroupByHash ={
+    val futureTupleList = fetchPlansFromService.map{ plans => {
       val storeToPlan:List[(String,Plan)] = for{
         plan <- plans
         stores <- plan.store
       }yield (stores,plan)
-        val plansByTag = storeToPlan.groupBy{
-          case(store,plan)=> store
-        }.mapValues{
-          storeToPlanList=>storeToPlanList.map{storeAndPlan => storeAndPlan._2}}
-          plansByTag.toList.sorted
-      }
+      val plansByTag = storeToPlan.groupBy{
+        case(store,plan)=> store.toUpperCase()
+      }.mapValues{
+        storeToPlanList=>storeToPlanList.map{storeAndPlan => storeAndPlan._2}}
+      plansByTag
     }
-    writeResponse(futureTupleList.map { plans =>
-      Json.arr(Json.toJson(plans.take(5)))
-    })
+    }
+    futureTupleList
   }
-
   //Utils
   def writeResponse(futurePersonsJsonArray: Future[JsArray]) = {
-    futurePersonsJsonArray.map {
-      plans =>
-        Ok(plans(0))
-    }
+    futurePersonsJsonArray.map(plans =>Ok(plans(0)))
   }
 }

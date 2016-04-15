@@ -23,7 +23,7 @@
                 <div ng-cloak>
                     <md-content>
                         <md-tabs md-dynamic-height md-border-bottom>
-                            <md-tab label="Recent">
+                            <md-tab label="Recent" md-on-select="pc.getAllPlans()">
                                 <md-content class="md-padding">
                                     <md-list ng-repeat="plan in pc.plans | filter:searchText">
                                         <md-list-item class="secondary-button-padding" ng-click="pc.viewPlanDetails(plan)">
@@ -39,15 +39,11 @@
                                     </md-list>
                                 </md-content>
                             </md-tab>
-                            <md-tab label="Top in #">
+                            <md-tab label="Top in #" md-on-select="pc.getPlansGroupByHash()">
                                 <md-content class="md-padding">
-                                    <md-list ng-repeat="hashTags in pc.plansByHash | filter:searchText">
-                                        <md-list-item class="secondary-button-padding" ><!--ng-click="pc.viewPlanDetails(plan)">-->
-                                            <p>{{ hashTags.store }}</p>
-                                            <md-button
-                                                    class="md-icon-button md-button md-secondary" ><!--ng-click="pc.deletePlan(plan,$index)">-->
-                                                <span class="glyphicon glyphicon-trash black "></span>
-                                            </md-button>
+                                    <md-list ng-repeat="hashTags in pc.plansGroupByHash | filter:searchText" >
+                                        <md-list-item class="secondary-button-padding" ng-click="pc.findPlansByHash(hashTags.store)">
+                                            <p>#{{hashTags.store}}</p>
                                         </md-list-item>
                                     </md-list>
                                     <md-list ng-hide="pc.plans.length">
@@ -60,8 +56,8 @@
                 </div>
             </md-sidenav>
 
-            <md-content flex id="content" class="md-padding">
-                <md-card-content>
+            <md-content flex id="content" class="md-padding" >
+                <md-card-content ng-hide="pc.hideRecentDisplay">
                     <div class="col-md-12">
                         <md-input-container class="col-md-6">
                             <label>Title</label>
@@ -86,7 +82,6 @@
                                    id="active">
                         </md-input-container>
                     </div>
-
                     <div class="col-md-12">
                         <div class="col-sm-offset-4 col-sm-8 text-right">
                             <a ng-href="/#/plans" id="btn_cancel">
@@ -100,7 +95,32 @@
                         </div>
                     </div>
                 </md-card-content>
+
+                <md-card-content ng-hide="!pc.hideRecentDisplay" ng-repeat="plan in pc.plansByHash">
+                    <md-card>
+                        <md-card-title>
+                            <md-card-title-text>
+                                <span class="md-headline">{{plan.title}}</span>
+                                <span class="md-subhead"><p>{{plan.store}}</p></span>
+                            </md-card-title-text>
+                            <md-card-actions layout="row" layout-align="end center">
+                                <md-button
+                                        class="md-icon-button md-button md-secondary" ng-click="pc.deletePlan(plan,$index)">
+                                    <span class="glyphicon glyphicon-edit black "></span>
+                                </md-button>
+                                <md-button
+                                        class="md-icon-button md-button md-secondary" ng-click="pc.deletePlan(plan,$index)">
+                                    <span class="glyphicon glyphicon-trash black "></span>
+                                </md-button>
+                            </md-card-actions>
+                        </md-card-title>
+                        <md-card-content>
+                            <span class="">{{plan.content}}</span>
+                        </md-card-content>
+                    </md-card>
+                </md-card-content>
             </md-content>
+
         </div>
     </md-card-content>
 </div>

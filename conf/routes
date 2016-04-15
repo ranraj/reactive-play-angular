@@ -20,7 +20,8 @@ DELETE  /rest/user/r/:id                 @controllers.Users.rawDeleteUser(id: St
 
 # Plan management API
 GET     /rest/plans                      @controllers.Plans.findPlans
-GET     /rest/plans/groupByStore         @controllers.Plans.findPlansByHash
+GET     /rest/plans/groupByStore         @controllers.Plans.findPlansGroupByHash
+GET     /rest/plans/findByStore/:id          @controllers.Plans.findPlansByHash(id:String)
 GET     /rest/plans/stores               @controllers.Plans.findAllStores
 POST    /rest/plan                       @controllers.Plans.createPlan
 PUT     /rest/plan/:id                   @controllers.Plans.updatePlan(id:String)

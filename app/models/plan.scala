@@ -21,6 +21,7 @@ object PlanJsonFormats {
   import play.api.libs.json.Json
 
   // Plan JSON Format implicit for REST
+  /* (JsPath \ "_id") - Accessing the Json Value _id from the request*/
   implicit val planReads: Reads[Plan] = (
   (JsPath \ "_id").readNullable[BSONObjectID] and
   (JsPath \ "title").readNullable[String].map(_.getOrElse("In Urgent")).map(Some(_)) and
