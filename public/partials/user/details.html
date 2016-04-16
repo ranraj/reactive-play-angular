@@ -55,13 +55,14 @@
                     </md-input-container>
                 </div>
                 <div class="col-md-12">
-                    <md-input-container class="col-md-6">
-                        <label>Date of Birth</label>
-                        <input ng-model="udc.user.dob" type="date" id="dob"
+                    <!--<md-input-container class="col-md-6">
+                        <label>Date of Birth</label>-->
+                        <md-datepicker ng-model="udc.user.dob" md-placeholder="Date of Birth" date-frmt></md-datepicker>
+                        <!--<input ng-model="udc.user.dob" type="date" id="dob"
                                 placeholder="yyyy-MM-dd"
                                 min="1900-01-01" max="2005-12-31"
-                               date-frmt />
-                    </md-input-container>
+                               date-frmt />-->
+                   <!-- </md-input-container>-->
                 </div>
 
                 <pre hidden>{{ cuc.user | json }}</pre>
