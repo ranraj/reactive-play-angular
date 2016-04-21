@@ -71,7 +71,7 @@ class PlanService
           @$log.debug "deletePlan #{angular.toJson(id,true)}"
           deferred = @$q.defer()
 
-          @$http.delete("/rest/plan/s/#{id}")
+          @$http.delete("/rest/plan/deactivate/#{id}")
           .success((data, status, headers) =>
                   @$log.info("Successfully deleted Plan - status #{status}")
                   deferred.resolve(data)

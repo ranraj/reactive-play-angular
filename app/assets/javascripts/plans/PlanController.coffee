@@ -25,7 +25,7 @@ class PlanController
 
     deletePlan: (@id,@rowIndex) ->
              @$log.debug "deletePlan()"
-             @PlanService.deletePlan(@id._id.$oid)
+             @PlanService.deletePlan(@id.id)
              .then(
                  (data) =>
                    @$log.debug "Promise returned #{data} Plan"
@@ -44,7 +44,7 @@ class PlanController
 
     saveOrUpdate: () ->
           @$log.debug "saveOrUpdate #{@plan}"
-          if(@plan._id)
+          if(@plan.id)
             @updatePlan()
           else
             @createPlan()
@@ -70,7 +70,7 @@ class PlanController
     updatePlan: () ->
           @$log.debug "updatePlan()"
           @plan.active = true
-          @PlanService.updatePlan(@plan._id.$oid,@plan)
+          @PlanService.updatePlan(@plan.id,@plan)
           .then(
               (data) =>
                 @$log.debug "Promise returned #{data} Plan"

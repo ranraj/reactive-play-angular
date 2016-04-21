@@ -1,19 +1,18 @@
 package controllers
 
-import java.util.Comparator
 import javax.inject.Singleton
 
-import com.fasterxml.jackson.annotation.JsonValue
+import dao.PlansDAO
+import exceptions.UnexpectedServiceException
 import org.slf4j.{Logger, LoggerFactory}
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.json._
 import play.api.mvc._
 import play.modules.reactivemongo.MongoController
 import play.modules.reactivemongo.json.collection.JSONCollection
-import reactivemongo.api.Cursor
+import reactivemongo.bson.{BSONObjectID, BSONDocument}
+import reactivemongo.bson.DefaultBSONHandlers.BSONDocumentIdentity
 import services.PlansService
-
-import scala.collection.immutable.ListMap
 import scala.concurrent.Future
 
 /**
@@ -22,42 +21,24 @@ import scala.concurrent.Future
  * @see https://github.com/ReactiveMongo/Play-ReactiveMongo
  */
 @Singleton
-class Plans extends Controller with MongoController {
+class Plans extends Controller {
 
   private final val logger: Logger = LoggerFactory.getLogger(classOf[Plans])
 
-  /*
-   * Get a JSONCollection (a Collection implementation that is designed to work
-   * with JsObject, Reads and Writes.)
-   * Note that the `collection` is not a `val`, but a `def`. We do _not_ store
-   * the collection reference to avoid potential problems in development with
-   * Play hot-reloading.
-   */
-  def collection: JSONCollection = db.collection[JSONCollection]("plans")
-
-  // ------------------------------------------ //
-  // Using case classes + Json Writes and Reads //
-  // ------------------------------------------ //
-
-  import models.PlanJsonFormats._
   import models._
-
+  import json.JsonFormats._
+  import models.Plan._
   def createPlan = Action.async(parse.json) {
     request =>
-    /*
-     * request.body is a JsValue.
-     * There is an implicit Writes that turns this JsValue as a JsObject,
-     * so you can call insert() with this JsValue.
-     * (insert() takes a JsObject as parameter, or anything that can be
-     * turned into a JsObject using a Writes.)
-     */
       request.body.validate[Plan].map {
         plan =>
-        // `plan` is an instance of the case class `models.Plan`
-          collection.insert(plan).map {
-            lastError =>
-              logger.debug(s"Successfully inserted with LastError: $lastError")
-              Created(s"Plan Added")
+          PlansService.insert(plan).map {
+            result => result.fold(
+              exception => throw UnexpectedServiceException("Unable to create plan: [data=plan]", exception),
+              plan => {
+                logger.info(s"Plan successfully created: [_id=$plan]")
+                Ok(plan)
+              })
           }
       }.getOrElse(Future.successful(BadRequest("invalid json")))
   }
@@ -66,91 +47,65 @@ class Plans extends Controller with MongoController {
     request =>
       request.body.validate[Plan].map {
         plan =>
-          // find our plan by first name and last name
-          val nameSelector = Json.obj("_id" -> Json.obj("$oid"->id))
-          collection.update(nameSelector, plan).map {
-            lastError =>
-              logger.debug(s"Successfully updated with LastError: $lastError")
-              Created(s"Plan Changed")
+          PlansService.update(id, plan).map {
+            result =>
+              result.fold(exception => throw UnexpectedServiceException("Unable to create plan: [data=plan]", exception),
+                plan => {
+                  logger.info(s"Plan successfully updated: [_id=$plan]")
+                  Ok(plan)
+                })
           }
       }.getOrElse(Future.successful(BadRequest("invalid json")))
   }
 
-  def softDeletePlan(id: String) = Action.async {
-    request =>
-      // find our plan by first name and last name
-      collection.update(Json.obj("_id" -> Json.obj("$oid"->id)), Json.obj("$set"->Json.obj("active"->"false"))).map {
-        lastError =>
-          logger.debug(s"Successfully deleted with LastError: $lastError")
-          Ok(s"Plan deleted")
-      }
-  }
+   def deActivatePlan(id: String) = Action.async {
+   request =>
+     PlansService.deActivate(id).map {
+       result =>
+         result.fold(exception => throw UnexpectedServiceException("Unable to deactivate plan: [data=plan]", exception),
+           plan => {
+             logger.info(s"Plan successfully deactivate: [_id=$plan]")
+             Ok(Json.obj("result"->"Deactivated successfully"))
+           })
+     }
+ }
 
-  def rawDeletePlan(id: String) = Action.async {
-    collection.remove(Json.obj("_id" -> Json.obj("$oid"->id))).map(_ => Ok)
-  }
+ def deletePlan(id: String) = Action.async {
+   PlansService.delete(id: String).map {
+      result =>
+        result.fold(exception => throw UnexpectedServiceException("Unable to remove plan: [data=plan]", exception),
+          plan => {
+            logger.info(s"Plan successfully removed: [_id=$plan]")
+            Ok(Json.obj("result"->"Deleted successfully"))
+          })
+    }
+ }
+
 
   def findPlan(id: String) = Action.async {
-    val futurePlans: Future[Option[Plan]] = collection.
-      find(Json.obj("_id" -> Json.obj("$oid"->id),"active" -> true)).one[Plan]
-    futurePlans.map{
-        case plan:Some[Plan] => Ok(Json.toJson(plan))
+    PlansService.findById(id).map { result =>
+      result match {
+        case plan: Some[Plan] => Ok(Json.toJson(plan))
         case None => NoContent
+      }
     }
-  }
-
-  def fetchPlansFromService:Future[List[Plan]] = {
-    // let's do our query
-    val cursor: Cursor[Plan] = collection.
-      // find all
-      find(Json.obj("active" -> true)).
-      // sort them by creation date
-      sort(Json.obj("created" -> -1)).
-      // perform the query and get a cursor of JsObject
-      cursor[Plan]
-    // return Future[List[Plan]]
-    cursor.collect[List]()
   }
 
   def findPlans = Action.async {
-    // map as json array
-    writeResponse(fetchPlansFromService.map(plans =>Json.arr(plans)))
+    writeResponse(PlansService.findActivePlans.map(plans => Json.arr(plans)))
   }
 
-  def findAllStores = Action.async{
-    val futureStoreList = fetchPlansFromService.map { plans => {
-      for {
-        plan <- plans
-        stores <- plan.store
-      } yield (stores)
-    }
-    }
-    writeResponse(futureStoreList.map(stores =>Json.arr(stores.distinct)))
-  }
+   def findAllStores = Action.async{
+     writeResponse(PlansService.findAllStore.map(f=>Json.arr(f)))
+   }
+   def findPlansGroupByHash = Action.async{
+     writeResponse(PlansService.findPlansGroupByHashTag.map(plans =>plans.toList.sorted).map( plans =>Json.arr(Json.toJson(plans.take(5)))))
+   }
+   def findPlansByHash(hashId:String) = Action.async{
+     writeResponse(PlansService.findPlansGroupByHashTag.map(_.get(hashId.toUpperCase())).map (plans =>Json.arr(plans)))
+   }
 
-  def findPlansGroupByHash = Action.async{
-    writeResponse(findPlansAndGroupByHash.map(plans =>plans.toList.sorted).map( plans =>Json.arr(Json.toJson(plans.take(5)))))
-  }
-  def findPlansByHash(hashId:String) = Action.async{
-    writeResponse(findPlansAndGroupByHash.map(_.get(hashId.toUpperCase())).map (plans =>Json.arr(plans)))
-  }
-  private def findPlansAndGroupByHash ={
-    val futureTupleList = fetchPlansFromService.map{ plans => {
-      val storeToPlan:List[(String,Plan)] = for{
-        plan <- plans
-        stores <- plan.store
-      }yield (stores,plan)
-      val plansByTag = storeToPlan.groupBy{
-        case(store,plan)=> store.toUpperCase()
-      }.mapValues{
-        storeToPlanList=>storeToPlanList.map{storeAndPlan => storeAndPlan._2}}
-      plansByTag
-    }
-    }
-    futureTupleList
-  }
-  //Utils
   def writeResponse(futurePersonsJsonArray: Future[JsArray]) = {
-    futurePersonsJsonArray.map(plans =>Ok(plans(0)))
+    futurePersonsJsonArray.map(plans => Ok(plans(0)))
   }
 }
