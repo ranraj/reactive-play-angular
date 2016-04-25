@@ -1,5 +1,6 @@
 package json
 
+import models.Plan
 import play.api.UnexpectedException
 import play.api.http.Writeable
 import play.api.libs.json._
@@ -9,7 +10,7 @@ import play.api.libs.json._
  */
 object JsonFormats {
 
-  implicit val bsonOBjectIDFormat = play.modules.reactivemongo.json.BSONFormats.BSONObjectIDFormat
+  implicit val bsonObjectIDFormat = play.modules.reactivemongo.json.BSONFormats.BSONObjectIDFormat
 
   /**
    * Writeable for [[play.api.mvc.Result]] content.
@@ -18,6 +19,7 @@ object JsonFormats {
    * @tparam A
    * @return
    */
+
   implicit def writeable[A](implicit w: Writes[A], wjs: Writeable[JsValue]): Writeable[A] = {
     wjs.map(a => {
       Json.toJson(a) match {

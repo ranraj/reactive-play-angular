@@ -13,7 +13,5 @@ trait MongoHelper extends ContextHelper{
   lazy val db = ReactiveMongoPlugin.db
 }
 object MongoHelper extends MongoHelper {
-
   def identify(bson: BSONValue) = bson.asInstanceOf[BSONObjectID].stringify
-
 }

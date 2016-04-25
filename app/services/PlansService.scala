@@ -42,7 +42,7 @@ object PlansService {
     val futureTupleList = findActivePlans.map{ plans => {
       val storeToPlan:List[(String,Plan)] = for{
         plan <- plans
-        stores <- plan.store
+        stores <- plan.store.get
       }yield (stores,plan)
       val plansByTag = storeToPlan.groupBy{
         case(store,plan)=> store.toUpperCase()
@@ -61,5 +61,30 @@ object PlansService {
       } yield (stores)
     }.distinct
     }
+  }
+  def findHashTags(content:String) = {
+    import scala.util.matching.Regex
+    val hashTagPattern: Regex = """#(\w+)""".r
+    hashTagPattern.findAllIn(content).map(s=> s.drop(1)).toList
+  }
+
+  def assembleHashTagsInPlan(plan:Plan) = {
+    plan.store=Some(findHashTags(plan.content))
+    plan
+  }
+  def findTitle(content:String) ={
+    Some(content.split(" ")(0))
+  }
+  def assembleTitleInPlan(plan:Plan)={
+    plan.title = Some(findTitle(plan.content).getOrElse("Untitled"))
+    plan
+  }
+  val assembleHashAndTitle = assembleHashTagsInPlan _ compose assembleTitleInPlan _
+
+  def addComment(id:String,comment:String)={
+    PlansDAO.push(id,"comments",comment);
+  }
+  def addDiscussion(id:String,discussion:String)={
+    PlansDAO.push(id,"discussion",discussion);
   }
 }

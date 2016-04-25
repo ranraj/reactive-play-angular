@@ -64,13 +64,17 @@
                             <input ng-model="pc.plan.title" type="text" md-maxlength="50">
                         </md-input-container>
 
-                        <md-input-container class="col-md-12">
+                        <md-input-container class="col-md-12 md-block">
                             <label>Content</label>
                         <textarea ng-model="pc.plan.content" id="lbl_content" md-maxlength="140" rows="4" cols="4">
                         </textarea>
                         </md-input-container>
+                        <!-- <md-input-container class="md-block">
+                             <label>Biography</label>
+                             <textarea md-maxlength="150" rows="5" md-select-on-focus></textarea>
+                         </md-input-container>-->
                     </div>
-                    <div class="col-md-12">
+                    <!--<div class="col-md-12">
                         <md-input-container class="col-md-6">
                             <label>#Store</label>
                             <input ng-model="pc.plan.store" required
@@ -81,7 +85,7 @@
                             <input ng-model="pc.plan.active" type="text"
                                    id="active">
                         </md-input-container>
-                    </div>
+                    </div>-->
                     <div class="col-md-12">
                         <div class="col-sm-offset-4 col-sm-8 text-right">
                             <a ng-href="/#/plans" id="btn_cancel">

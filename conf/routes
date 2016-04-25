@@ -20,14 +20,19 @@ DELETE  /rest/user/r/:id                 @controllers.Users.rawDeleteUser(id: St
 
 # Plan management API
 GET     /rest/plans                      @controllers.Plans.findPlans
-GET     /rest/plans/groupByStore        @controllers.Plans.findPlansGroupByHash
-GET     /rest/plans/findByStore/:id     @controllers.Plans.findPlansByHash(id:String)
-GET     /rest/plans/stores              @controllers.Plans.findAllStores
 POST    /rest/plan                       @controllers.Plans.createPlan
 PUT     /rest/plan/:id                   @controllers.Plans.updatePlan(id:String)
 GET     /rest/plan/:id                   @controllers.Plans.findPlan(id: String)
 DELETE  /rest/plan/deactivate/:id        @controllers.Plans.deActivatePlan(id: String)
 DELETE  /rest/plan/:id                   @controllers.Plans.deletePlan(id: String)
+
+#Plan hash
+GET     /rest/plans/groupByStore        @controllers.Plans.findPlansGroupByHash
+GET     /rest/plans/findByStore/:id     @controllers.Plans.findPlansByHash(id:String)
+GET     /rest/plans/stores              @controllers.Plans.findAllStores
+
+POST    /rest/plan/comment/:id          @controllers.Plans.addComment(id:String)
+POST    /rest/plan/discussion/:id       @controllers.Plans.addToDiscussion(id:String)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

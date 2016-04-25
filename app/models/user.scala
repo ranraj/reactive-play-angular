@@ -24,7 +24,6 @@ import play.api.libs.functional.syntax._
 import reactivemongo.bson._
 import json.MongoImplicits._
 object User {
-
   // User JSON Format implicit for REST
   implicit val userReads: Reads[User] = (
   (JsPath \ "_id").readNullable[BSONObjectID] and
