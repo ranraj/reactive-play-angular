@@ -1,7 +1,7 @@
 
 class PlanController
 
-    constructor: (@$log, @PlanService) ->
+    constructor: (@$log, @PlanService,@$mdToast) ->
         @$log.debug "constructing PlanController"
         @plans = []
         @getAllPlans()
@@ -32,12 +32,19 @@ class PlanController
                    @plan = data
                    ##Need to update message
                    @plans.splice(rowIndex, 1)
+                   @toast('Plan deleted.')
                    @$log.info("Plan deleted ")
                ,
                (error) =>
                    @$log.error "Unable to soft-delete Plan: #{error}"
              )
-
+    toast:(message) ->
+        @$mdToast.show(
+                                 @$mdToast.simple()
+                                   .textContent(message)
+                                   .position('bottom left' )
+                                   .hideDelay(3000)
+                               );
     viewPlanDetails : (@selectedPlan) ->
             @$log.debug "viewPlanDetails for #{@selectedPlan}"
             @plan = @selectedPlan
@@ -61,6 +68,7 @@ class PlanController
               (data) =>
                 @$log.debug "Promise returned #{data} Plan"
                 @clear()
+                @toast('Plan created.')
                 @getAllPlans()
               ,
               (error) =>
@@ -75,6 +83,7 @@ class PlanController
               (data) =>
                 @$log.debug "Promise returned #{data} Plan"
                 @clear()
+                @toast('Plan updated.')
                 @getAllPlans()
             ,
             (error) =>
@@ -120,4 +129,4 @@ class PlanController
                 (error) =>
                     @$log.error "Unable to get Plans: #{error}"
                 )
-controllersModule.controller('PlanController', ['$log', 'PlanService', PlanController])
+controllersModule.controller('PlanController', ['$log', 'PlanService','$mdToast', PlanController])
